@@ -1,7 +1,7 @@
 import cv2
 import turtle as trtl
 import numpy as np
-from multiprocessing import Process
+from multiprocessing import Array, Process
 import os
 
 ## import image and create x and y / width and height variables
@@ -32,30 +32,34 @@ painter.penup()
 painter.goto(x_pos,y_pos)
 painter.pendown()
 
-def create_row(segment):
-    new_painter=trtl.Turtle()
-    
+def create_row(portion,i):
+    t= trtl.Turtle()
+    painters.append(t)
+    y_pos= y-len(portion)*i
+    while y_pos >= -y:
+        for row in portion:
+            for pixel in row:
+                painters[i].color(tuple(pixel))
+                painters[i].forward(1)
+                x_pos+=1
+            x_pos=-x
+            painter[i].penup()
+            painter[i].goto(x_pos,y_pos)
+            painter[i].pendown()
+            y_pos-=1
 
-"""
+
 segments= 5
 
-for segment in range(segments):
-    p=Process(target=create_row, args=(segment))
+i=0
+if __name__ == '__main__':
+    painters=[]
+    while i < segments:
+        for portion in range(0, len(image),segments):
+            p=Process(target=create_row, args=(portion,i))
+            p.start()
+            p.join()
 
-"""
 
-
-while y_pos >= -y:
-    for row in image:
-        for pixel in row:
-            painter.color(tuple(pixel))
-            painter.forward(1)
-            x_pos+=1
-        x_pos=-x
-        painter.penup()
-        painter.goto(x_pos,y_pos)
-        painter.pendown()
-        y_pos-=1
-            #painter.color(pixel)
 
 wn.mainloop()
